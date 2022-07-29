@@ -1,0 +1,25 @@
+* Chabi's Personal Blog
+Blog about my interests
+
+This page lists my blog posts, focusing primarily on:
+- Free Unix-like operating systems (Linux, OpenBSD)
+- Systems Programming (C & Rust)
+- Competitive Programming (In C)
+- A look into my own software (Lisps, Text Editors, Websites)
+- My learnings into new topics (Economics/Finance mostly)
+
+** Other Stuff
+- [[https://git.dumrich.com/][Git Server]]
+- [[mailto:abhinavchavali12@gmail.com][Email]]
+
+** [[https://www.dumrich.com][Building an Emacs Like Text Editor in C]]
+The internals of an Emacs like text editor, built entirely in C
+
+** [[https://www.dumrich.com][Memory Safe Scheme built in Rust]]
+Extend our text editor with a memory safe Scheme like language
+
+** [[https://www.dumrich.com/][Making a better user interface to git]]
+Using ~libgit2~ to make a more straightforward interface to git and other VCSs
+
+** [[https://www.dumrich.com][GTK4 Note Taking Application with Org mode]]
+Live rendering GTK4 Note taking application
