@@ -1,3 +1,6 @@
+#+TITLE: Chabi's Blog
+#+AUTHOR: Abhinav Chavali
+
 * Chabi's Personal Blog
 Blog about my interests
 
@@ -7,14 +10,6 @@ This page lists my blog posts, focusing primarily on:
 - Competitive Programming (In C)
 - A look into my own software (Lisps, Text Editors, Websites)
 - My learnings into new topics (Economics/Finance mostly)
-
-** TOC :toc:
-- [[#chabis-personal-blog][Chabi's Personal Blog]]
-  - [[#other-stuff][Other Stuff]]
-  - [[#building-an-emacs-like-text-editor-in-c][Building an Emacs Like Text Editor in C]]
-  - [[#memory-safe-scheme-built-in-rust][Memory Safe Scheme built in Rust]]
-  - [[#making-a-better-user-interface-to-git][Making a better user interface to git]]
-  - [[#gtk4-note-taking-application-with-org-mode][GTK4 Note Taking Application with Org mode]]
 
 ** Other Stuff
 - [[https://git.dumrich.com/][Git Server]]
