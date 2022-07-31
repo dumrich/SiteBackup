@@ -1,0 +1,88 @@
+baseURL: "localhost:1313/" # if your site is in 'https', then make sure your base url isn't written using 'http' otherwise your sitemap would contain http (as opposeed to https) URLs. This would affect Google indexing of your URLs.
+title: dumrich.com
+paginate: 5
+theme: PaperMod
+
+enableInlineShortcodes: true
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+enableEmoji: true
+pygmentsUseClasses: true
+
+languages:
+    en:
+        languageName: "English"
+        weight: 1
+        taxonomies:
+          category: categories
+          tag: tags
+          series: series
+        menu:
+            main:
+                - name: Archive
+                  url: archives
+                  weight: 5
+                - name: Search
+                  url: search/
+                  weight: 10
+                - name: Tags
+                  url: tags/
+                  weight: 10
+                - name: GitHub
+                  url: https://github.com/dumrich
+params:
+
+    defaultTheme: auto
+    # disableThemeToggle: true
+    ShowShareButtons: true
+    ShowReadingTime: true
+    # disableSpecial1stPost: true
+    displayFullLangName: true
+    ShowPostNavLinks: true
+    ShowBreadCrumbs: true
+    ShowCodeCopyButtons: true
+    ShowToc: true
+    # comments: false
+
+    profileMode:
+        enabled: false
+        title: Blog
+        imageUrl: "#"
+        imageTitle: my image
+        # imageWidth: 120
+        # imageHeight: 120
+        buttons:
+            - name: Archives
+              url: archives
+            - name: Tags
+              url: tags
+
+    homeInfoParams:
+        Title: "Abhinav Chavali"
+        Content: " 
+                Hey there! This site is used to document my thoughts and projects, relating especially to Unix-like operating systems, Programming Languages, and other software projects. I may make a few posts detailing my learnings in new topics like Finance and Economics."
+
+    socialIcons:
+        - name: github
+          url: "https://github.com/adityatelange/hugo-PaperMod"
+        - name: LinkedIn
+          url: "https://www.linkedin.com/in/abhinav-chavali-a03258219/"
+
+    editPost:
+        URL: "https://github.com/dumrich/SiteBackup/tree/master/blog/content-org/content"
+        Text: "Suggest Changes" # edit text
+        appendFilePath: true # to append file path to Edit link
+
+outputs:
+    home:
+        - HTML
+        - RSS
+        - JSON # is necessary
+markup:
+    goldmark:
+        renderer:
+            unsafe: true
+    highlight:
+        noClasses: false
