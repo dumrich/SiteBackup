@@ -1,0 +1,9 @@
+#+hugo_base_dir: ../
+
+#+TITLE: Terminals on Unix Systems
+#+DATE: 2022-09-05
+#+AUTHOR: "Abhinav Chavali"
+
+#+HUGO_DRAFT: true
+#+HUGO_TAGS: IPC Sockets Networking C Unix
+#+HUGO_CATEGORIES: Programming

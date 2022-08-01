@@ -1,11 +1,15 @@
 +++
 title = "Building an Emacs Like Text Editor in C"
+author = ["""
+  "Abhinav Chavali"
+  """]
+date = 2022-08-30
 tags = ["Emacs", "Unix", "C"]
 categories = ["Programming"]
-draft = false
+draft = true
 +++
 
-## Building an Emacs Like Text Editor in C {#cemacs-editor}
+## Building an Emacs Like Text Editor in C {#building-an-emacs-like-text-editor-in-c}
 
 [Repo Link](https://git.dumrich.com/chabi/cemacs)
 

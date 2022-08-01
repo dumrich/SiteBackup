@@ -1,15 +1,14 @@
 #+hugo_base_dir: ../
 
 #+TITLE: Building an Emacs Like Text Editor in C
+#+DATE: 2022-08-30
+#+AUTHOR: "Abhinav Chavali"
+
+#+HUGO_DRAFT: true
 #+HUGO_TAGS: Emacs Unix C
 #+HUGO_CATEGORIES: Programming
 
 * Building an Emacs Like Text Editor in C
-:PROPERTIES: 
-:EXPORT_FILE_NAME: cemacs-editor
-:EXPORT_DATE: 2022-08-30
-:EXPORT_AUTHOR: "Abhinav Chavali"
-:END:
 
 [[https://git.dumrich.com/chabi/cemacs][Repo Link]]
 

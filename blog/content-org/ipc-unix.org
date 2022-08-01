@@ -1,0 +1,9 @@
+#+hugo_base_dir: ../
+
+#+TITLE: Interprocess Communication on Unix systems
+#+DATE: 2022-08-21
+#+AUTHOR: "Abhinav Chavali"
+
+#+HUGO_DRAFT: true
+#+HUGO_TAGS: IPC Pipes FIFO C Unix
+#+HUGO_CATEGORIES: Programming

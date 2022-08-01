@@ -6,7 +6,7 @@ theme: PaperMod
 enableInlineShortcodes: true
 enableRobotsTXT: true
 buildDrafts: false
-buildFuture: false
+buildFuture: true
 buildExpired: false
 enableEmoji: true
 pygmentsUseClasses: true
@@ -22,7 +22,7 @@ languages:
         menu:
             main:
                 - name: Archive
-                  url: archives
+                  url: archives/
                   weight: 5
                 - name: Search
                   url: search/
@@ -37,6 +37,7 @@ params:
     defaultTheme: auto
     # disableThemeToggle: true
     ShowShareButtons: true
+    ShareButtons: ["reddit", "twitter", "linkedin", "facebook"]
     ShowReadingTime: true
     # disableSpecial1stPost: true
     displayFullLangName: true
@@ -44,7 +45,7 @@ params:
     ShowBreadCrumbs: true
     ShowCodeCopyButtons: true
     ShowToc: true
-    # comments: false
+    comments: false
 
     profileMode:
         enabled: false
@@ -62,11 +63,11 @@ params:
     homeInfoParams:
         Title: "Abhinav Chavali"
         Content: " 
-                Hey there! This site is used to document my thoughts and projects, relating especially to Unix-like operating systems, Programming Languages, and other software projects. I may make a few posts detailing my learnings in new topics like Finance and Economics."
+                Hey there! This site is used to document my thoughts and projects, relating especially to Unix-like operating systems, programming languages, and other software projects. I may make a few posts detailing my learnings in new topics like Finance and Economics."
 
     socialIcons:
         - name: github
-          url: "https://github.com/adityatelange/hugo-PaperMod"
+          url: "https://github.com/dumrich"
         - name: LinkedIn
           url: "https://www.linkedin.com/in/abhinav-chavali-a03258219/"
 

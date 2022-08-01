@@ -1,0 +1,9 @@
+#+hugo_base_dir: ../
+
+#+TITLE: Socket programming in Unix
+#+DATE: 2022-08-28
+#+AUTHOR: "Abhinav Chavali"
+
+#+HUGO_DRAFT: true
+#+HUGO_TAGS: IPC Sockets Networking C Unix
+#+HUGO_CATEGORIES: Programming
