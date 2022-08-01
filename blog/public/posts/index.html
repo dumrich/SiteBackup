@@ -122,7 +122,7 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://www.dumrich.com/archives" title="Archive">
+                <a href="https://www.dumrich.com/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
@@ -159,28 +159,18 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2>Building an Emacs Like Text Editor in C
+    <h2>File I/O on Unix systems
     </h2>
   </header>
   <div class="entry-content">
-    <p>Building an Emacs Like Text Editor in C Repo Link
-Over the past couple months, I’ve been working on a text editor that aims to fix many of the hardships that I’ve faced as a GNU/Emacs user over the past few months. Specifically, I wanted to keep the core ideas of Emacs, but make some improvements, especially:
-Using a custom compiled Scheme over Emacs Lisp, with a simple API Few dependencies Fast, multithreaded design Better UI Minibuffer is a popup Should be very simple (a basic programmer should be able to master all of it in a day), and also powerful Intuitive keybindings It currently depends only on ncurses, with a GTK backend in the works....</p>
+    <p>Unix systems have two ways of doing Input/Output (I/O) in C:
+POSIX File I/O ISO C Standard I/O There are 2 different interfaces for I/O because the latter is meant to be portable. C implmentations must provide the &lt;stdio.h&gt; header, so it could work theoretically for any C implementation.
+The POSIX implementation are unbuffered (more on that later), and usually invoke direct system calls to the kernel.
+This post will go over both of types of I/O by implementing a very simple Swiper-like utility (for use in the Cemacs editor) in two different ways....</p>
   </div>
-  <footer class="entry-footer">1 min</footer>
-  <a class="entry-link" aria-label="post link to Building an Emacs Like Text Editor in C" href="https://www.dumrich.com/posts/cemacs-editor/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>My first post
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>This is my post body</p>
-  </div>
-  <footer class="entry-footer">1 min</footer>
-  <a class="entry-link" aria-label="post link to My first post" href="https://www.dumrich.com/posts/my-first-post/"></a>
+  <footer class="entry-footer"><span title='2022-07-31 00:00:00 +0000 UTC'>July 31, 2022</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;  "Abhinav Chavali"
+  </footer>
+  <a class="entry-link" aria-label="post link to File I/O on Unix systems" href="https://www.dumrich.com/posts/unix-file-io/"></a>
 </article>
     </main>
     

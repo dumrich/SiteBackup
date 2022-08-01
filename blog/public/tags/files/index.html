@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>Archive | dumrich.com</title>
+<title>Files | dumrich.com</title>
 <meta name="keywords" content="">
-<meta name="description" content="archives">
+<meta name="description" content="">
 <meta name="author" content="">
-<link rel="canonical" href="https://www.dumrich.com/archives/">
+<link rel="canonical" href="https://www.dumrich.com/tags/files/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.bc1149f4a72aa4858d3a9f71462f75e5884ffe8073ea9d6d5761d5663d651e20.css" integrity="sha256-vBFJ9KcqpIWNOp9xRi915YhP/oBz6p1tV2HVZj1lHiA=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://www.dumrich.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://www.dumrich.com/favicon-16x16.png">
@@ -18,6 +18,7 @@
 <link rel="mask-icon" href="https://www.dumrich.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="https://www.dumrich.com/tags/files/index.xml">
 <noscript>
     <style>
         #theme-toggle,
@@ -54,61 +55,15 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="Archive" />
-<meta property="og:description" content="archives" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.dumrich.com/archives/" /><meta property="article:section" content="" />
-
-
+</noscript><meta property="og:title" content="Files" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.dumrich.com/tags/files/" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Archive"/>
-<meta name="twitter:description" content="archives"/>
+<meta name="twitter:title" content="Files"/>
+<meta name="twitter:description" content=""/>
 
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Archive",
-      "item": "https://www.dumrich.com/archives/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Archive",
-  "name": "Archive",
-  "description": "archives",
-  "keywords": [
-    
-  ],
-  "articleBody": "",
-  "wordCount" : "0",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://www.dumrich.com/archives/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "dumrich.com",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://www.dumrich.com/favicon.ico"
-    }
-  }
-}
-</script>
 </head>
 
 <body class="list" id="top">
@@ -153,7 +108,7 @@
         <ul id="menu">
             <li>
                 <a href="https://www.dumrich.com/archives/" title="Archive">
-                    <span class="active">Archive</span>
+                    <span>Archive</span>
                 </a>
             </li>
             <li>
@@ -180,27 +135,28 @@
         </ul>
     </nav>
 </header>
-<main class="main">
-
-<header class="page-header">
-  <h1>Archive</h1>
+<main class="main"> 
+<header class="page-header"><div class="breadcrumbs"><a href="https://www.dumrich.com/">Home</a>&nbsp;»&nbsp;<a href="https://www.dumrich.com/tags/">Tags</a></div>
+  <h1>
+    Files
+  </h1>
 </header>
-<div class="archive-year">
-  <h2 class="archive-year-header">2022<sup class="archive-count">&nbsp;&nbsp;1</sup>
-  </h2>
-  <div class="archive-month">
-    <h3 class="archive-month-header">July<sup class="archive-count">&nbsp;&nbsp;1</sup></h3>
-    <div class="archive-posts">
-      <div class="archive-entry">
-        <h3 class="archive-entry-title">File I/O on Unix systems
-        </h3>
-        <div class="archive-meta"><span title='2022-07-31 00:00:00 +0000 UTC'>July 31, 2022</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;  "Abhinav Chavali"
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2>File I/O on Unix systems
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Unix systems have two ways of doing Input/Output (I/O) in C:
+POSIX File I/O ISO C Standard I/O There are 2 different interfaces for I/O because the latter is meant to be portable. C implmentations must provide the &lt;stdio.h&gt; header, so it could work theoretically for any C implementation.
+The POSIX implementation are unbuffered (more on that later), and usually invoke direct system calls to the kernel.
+This post will go over both of types of I/O by implementing a very simple Swiper-like utility (for use in the Cemacs editor) in two different ways....</p>
   </div>
-        <a class="entry-link" aria-label="post link to File I/O on Unix systems" href="https://www.dumrich.com/posts/unix-file-io/"></a>
-      </div>
-    </div>
-  </div>
-</div>
+  <footer class="entry-footer"><span title='2022-07-31 00:00:00 +0000 UTC'>July 31, 2022</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;  "Abhinav Chavali"
+  </footer>
+  <a class="entry-link" aria-label="post link to File I/O on Unix systems" href="https://www.dumrich.com/posts/unix-file-io/"></a>
+</article>
     </main>
     
 <footer class="footer">

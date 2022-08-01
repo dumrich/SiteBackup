@@ -180,6 +180,22 @@
 
     </footer>
 </article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2>File I/O on Unix systems
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Unix systems have two ways of doing Input/Output (I/O) in C:
+POSIX File I/O ISO C Standard I/O There are 2 different interfaces for I/O because the latter is meant to be portable. C implmentations must provide the &lt;stdio.h&gt; header, so it could work theoretically for any C implementation.
+The POSIX implementation are unbuffered (more on that later), and usually invoke direct system calls to the kernel.
+This post will go over both of types of I/O by implementing a very simple Swiper-like utility (for use in the Cemacs editor) in two different ways....</p>
+  </div>
+  <footer class="entry-footer"><span title='2022-07-31 00:00:00 +0000 UTC'>July 31, 2022</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;  "Abhinav Chavali"
+  </footer>
+  <a class="entry-link" aria-label="post link to File I/O on Unix systems" href="https://www.dumrich.com/posts/unix-file-io/"></a>
+</article>
     </main>
     
 <footer class="footer">

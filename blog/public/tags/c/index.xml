@@ -4,16 +4,18 @@
     <title>C on dumrich.com</title>
     <link>https://www.dumrich.com/tags/c/</link>
     <description>Recent content in C on dumrich.com</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://www.dumrich.com/tags/c/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 31 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dumrich.com/tags/c/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Building an Emacs Like Text Editor in C</title>
-      <link>https://www.dumrich.com/posts/cemacs-editor/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>File I/O on Unix systems</title>
+      <link>https://www.dumrich.com/posts/unix-file-io/</link>
+      <pubDate>Sun, 31 Jul 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://www.dumrich.com/posts/cemacs-editor/</guid>
-      <description>Building an Emacs Like Text Editor in C Repo Link
-Over the past couple months, I&amp;rsquo;ve been working on a text editor that aims to fix many of the hardships that I&amp;rsquo;ve faced as a GNU/Emacs user over the past few months. Specifically, I wanted to keep the core ideas of Emacs, but make some improvements, especially:
-Using a custom compiled Scheme over Emacs Lisp, with a simple API Few dependencies Fast, multithreaded design Better UI Minibuffer is a popup Should be very simple (a basic programmer should be able to master all of it in a day), and also powerful Intuitive keybindings It currently depends only on ncurses, with a GTK backend in the works.</description>
+      <guid>https://www.dumrich.com/posts/unix-file-io/</guid>
+      <description>Unix systems have two ways of doing Input/Output (I/O) in C:
+POSIX File I/O ISO C Standard I/O There are 2 different interfaces for I/O because the latter is meant to be portable. C implmentations must provide the &amp;lt;stdio.h&amp;gt; header, so it could work theoretically for any C implementation.
+The POSIX implementation are unbuffered (more on that later), and usually invoke direct system calls to the kernel.
+This post will go over both of types of I/O by implementing a very simple Swiper-like utility (for use in the Cemacs editor) in two different ways.</description>
     </item>
     
   </channel>
