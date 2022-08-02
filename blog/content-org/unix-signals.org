@@ -1,9 +1,11 @@
 #+hugo_base_dir: ../
 
-#+TITLE: Socket programming in Unix
-#+DATE: 2022-08-21
+#+TITLE: Signals in Unix
+#+DATE: 2022-08-07
 #+AUTHOR: "Abhinav Chavali"
 
 #+HUGO_DRAFT: true
-#+HUGO_TAGS: IPC Sockets Networking C Unix
+#+HUGO_TAGS: Systems Signals Unix C
 #+HUGO_CATEGORIES: Programming
+
+* Signals in Unix

@@ -63,7 +63,7 @@ params:
     homeInfoParams:
         Title: "Abhinav Chavali"
         Content: " 
-                Hey there! This site is used to document my thoughts and projects, relating especially to Unix-like operating systems, programming languages, and other software projects. I may make a few posts detailing my learnings in new topics like Finance and Economics."
+                Hey there! This site is used to document my learnings and projects, relating especially to Unix-like operating systems, programming languages, and other systems software projects. Whatever I post about, I've just learned very recently, so I wouldn't necessarily trust any of this code. I may make a few posts detailing my learnings in new topics like Finance and Economics."
 
     socialIcons:
         - name: github

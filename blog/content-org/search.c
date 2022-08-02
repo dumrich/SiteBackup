@@ -2,55 +2,47 @@
 #include <fcntl.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
+#include <ctype.h>
 
 #define BUFFSIZE 4096
 
-struct Res {
-    int line_num;
-    char* line;
-    struct Res* next;
-    struct Res* prev;
-};
-
-typedef struct Res Res;
-
-Res* find_in_file(int, size_t, char*);
+void find_in_file(FILE*, const char*);
 
 int main() {
     /* Open File with flags */
-    int fd = open("unix-file-io.org", O_RDONLY|O_CREAT|O_TRUNC);
-    /* Arbitrary value for testing purposes. */
-    int offset = 22;
+    FILE* fd = fopen("search.c", "r");
 
-    return close(fd);
+    find_in_file(fd, "file");
+
+    return fclose(fd);
 }
 
 char buf[BUFFSIZE];
-Res* find_in_file(int fd, size_t s, char* phrase) {
-    lseek(fd, s, SEEK_SET); /* Other options: SEEK_CUR, SEEK_END */
+void find_in_file(FILE* fp, const char* phrase) {
+    int current_line = 1;
 
-    int current_line = 0;
-    bool is_eof = false;
+    const int match_length = strlen(phrase);
+    while(fgets(buf, BUFFSIZE, fp)) {
+        int buf_len = strlen(buf);
+        if(buf_len < match_length) {
+            continue;
+        }
 
-    int buf_len;
-    
-    while(!is_eof) {
-        if((buf_len = read(fd, buf, BUFFSIZE)) != BUFFSIZE) {
-            is_eof = true;
-        } 
-
-        for(int i = 0; i < buf_len - strlen(phrase); i++) {
-            int match_length = strlen(phrase);
+        for(int i = 0; i < buf_len - match_length; i++) {
             int cur_cmp = 0;
-            while(match_length != 0 && cur_cmp <= match_length) {
-                if(buf[i + cur_cmp] != phrase[i + cur_cmp]) {
+            while(cur_cmp < match_length) {
+                if(tolower((unsigned char)buf[i + cur_cmp]) != tolower((unsigned char)phrase[cur_cmp])) {
                     goto result;
+                } else {
+                    cur_cmp++;
                 }
-                cur_cmp++;
             }
-            
+            printf("Line: %d\n", current_line); 
+
         result:
             continue;
         }
+        current_line++;
     }
 }

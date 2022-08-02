@@ -108,8 +108,8 @@ This post will go over both of types of I/O by implementing a very simple Swiper
   "keywords": [
     "Unix", "C", "Files"
   ],
-  "articleBody": "Unix systems have two ways of doing Input/Output (I/O) in C:\nPOSIX File I/O ISO C Standard I/O There are 2 different interfaces for I/O because the latter is meant to be portable. C implmentations must provide the header, so it could work theoretically for any C implementation.\nThe POSIX implementation are unbuffered (more on that later), and usually invoke direct system calls to the kernel.\nThis post will go over both of types of I/O by implementing a very simple Swiper-like utility (for use in the Cemacs editor) in two different ways. Then, we compare the performance of both implementations.\nSources: APUE, TLPI\nPOSIX File I/O At the core of the unbuffered POSIX functions are file descriptors. File descriptors are non-negative integers that are used to identify open files.\nIn C, three file descriptors (always the smallest numbers), are automatically reserved for the standard input, the standard output and the standard error (STDIN_FILNO, STDOUT_FILENO, and STDERR_FILENO in ).\nIn Unix, these are considered files, which we can read and write to as any other.\nOne thing to note about file descriptors, is that the operating system will always assign an open file the smallest file descriptor. For example, if the programmer decides to open a new file at the very beginning of the main function, the file will likely have the descriptor of 3, as 0, 1, and 2 are already reserved.\nBasic implementation We start with our interface function; It usually takes a *Editor, but for our purposes, we’ll reduce it down to the pathname and the string we want to search for. We will also test it in a :\n#include ",
-  "wordCount" : "276",
+  "articleBody": "Unix systems have two ways of doing Input/Output (I/O) in C:\nPOSIX File I/O ISO C Standard I/O There are 2 different interfaces for I/O because the latter is meant to be portable. C implmentations must provide the header, so it could work theoretically for any C implementation.\nThe POSIX implementation are unbuffered (more on that later), and usually invoke direct system calls to the kernel.\nThis post will go over both of types of I/O by implementing a very simple Swiper-like utility (for use in the Cemacs editor) in two different ways.\nSources: APUE, TLPI\nPOSIX File I/O At the core of the unbuffered POSIX functions are file descriptors. File descriptors are non-negative integers that are used to identify open files.\nIn C, three file descriptors (always the smallest numbers), are automatically reserved for the standard input, the standard output and the standard error (STDIN_FILNO, STDOUT_FILENO, and STDERR_FILENO in ).\nIn Unix, these are considered files, which we can read and write to as any other.\nOne thing to note about file descriptors, is that the operating system will always assign an open file the smallest file descriptor. For example, if the programmer decides to open a new file at the very beginning of the main function, the file will likely have the descriptor of 3, as 0, 1, and 2 are already reserved.\nBasic implementation We start with our interface function; It usually takes a *Editor, but for our purposes, we’ll reduce it down to the pathname and the string we want to search for. We will also test it in a :\n#include #include #include #include #include #include #define BUFFSIZE 4096 void find_in_file(int, size_t, char*); int main() { /* Open File with flags */ int fd = open(\"unix-file-io.org\", O_RDONLY|O_CREAT); find_in_file(fd, \"file\"); return close(fd); } First, we include some headers, specifically:\ngives us the close, lseek functions. gives us the open function, and oflag constants gives us the tolower function We also define the function find_in_file and the buffer size.\nThe buffer size will be how many bytes we will read from the file at a time. More on this later.\nThe open function takes a path, and some flags, and returns a file descriptor. This file descriptor is how we will refer to the file from here on out. On most Unix systems, this will be the value 3, as it is the smallest available integer.\nDifferent flags can be Or’d together to create a mode that will determine access permissions. A complete list can be found here.\nIn this case, we Or the RDONLY flag, and the CREAT flag. This means, that we can only read the file, and if it doesn’t exist, it will be created. If we Or’d with a write flag, we would also be able to write to the file.\nNext, we call our function, giving it the phrase “file”.\nFinally, we close the file. When the process exits, the open files automatically close.\nNext, the find_in_file function:\nchar buf[BUFFSIZE]; void find_in_file(int fd, char* phrase) { int current_line = 1; bool is_eof = false; int match_length = strlen(phrase); int buf_len; while(!is_eof) { if((buf_len = read(fd, buf, BUFFSIZE)) != BUFFSIZE) { is_eof = true; } for(int i = 0; i \u003c buf_len - strlen(phrase); i++) { int cur_cmp = 0; while(cur_cmp \u003c match_length) { if(buf[i+cur_cmp] == '\\n') { current_line++; goto result; } if(tolower(buf[i + cur_cmp]) != tolower(phrase[cur_cmp])) { goto result; } else { cur_cmp++; } } printf(\"Line: %d\\n\", current_line); result: continue; } } } First, we create a buffer of size BUFFSIZE.\nThen, we set some preliminary flags. The initial line is 1, and the offset has not reached the end of file. Finally, we set the length of the phrase to how many characters we have to match.\nNow, we read BUFFSIZE bytes into the buffer. read returns the number of bytes it read, so if that number is less than the size of the buffer, we know that we have reached the end of the file. In that case, the while loop won’t loop again.\nNow that the bytes are in the buffer, we iterate through the current buffer with an algorithm to check if the characters match.\nWe check how many characters have been matched, and if the number of characters matched is equal to the length of the phrase, that is a match. If so, we print the line number. We increment the line number if we encounter a newline character.\nOther Functions There are some other functions that may be useful to know.\n#include int creat(const char* path, mode_t mode); This function is equal to open(path, O_WRONLY | O_CREAT | O_TRUNC, mode);\nNotice how it is opened for writing only.\nThe lseek function is another useful function that is used to manipulate the offset (aka current position in a file).\n#include off_t lseek(int fd, off_t offset, int whence); offset could mean different things depending on whence.\nIf whence is SEEK_SET, the files current position if offset from the beginning. If whence is SEEK_CUR, the files current position if offset from the current position. If whence is SEEK_END, the files current position if offset from the size of the file. If you seek past the end of the file, that creates a hole in the file. The hole is not backed by a storage medium.\nReading and writing operations also manage the offset of the file.\nC Standard I/O The C Standard I/O works a little bit differently. We still read and write and interact with files, but this I/O is a little bit more featureful because it comes with internal buffering. The FILE object maintains its own buffer so it doesn’t have to make a system call to read or write every single time.\nIt may read a little more the first time, so it would just be getting data from its own buffer.\nThe 3 kinds of I/O are:\nCharacter I/O, where one character is read or written Line I/O, where one line is read or written Direct I/O, where the exact number of objects and size of each object is specified. Basic implementation This is a basic implementation with buffering. This time when we use fopen, we are returned a FILE*. Instead of Or-ing options, we can just add a string of permissions. In this case, we only need “r” (read) permissions.\n#define BUFFSIZE 4096 void find_in_file(FILE*, const char*); int main() { /* Open File with flags */ FILE* fd = fopen(\"search.c\", \"r\"); find_in_file(fd, \"file\"); return fclose(fd); } Now, we implement the same basic algorithm as before:\nchar buf[BUFFSIZE]; void find_in_file(FILE* fp, const char* phrase) { int current_line = 1; const int match_length = strlen(phrase); while(fgets(buf, BUFFSIZE, fp)) { int buf_len = strlen(buf); if(buf_len \u003c match_length) { continue; } for(int i = 0; i \u003c buf_len - match_length; i++) { int cur_cmp = 0; while(cur_cmp \u003c match_length) { if(tolower((unsigned char)buf[i + cur_cmp]) != tolower((unsigned char)phrase[cur_cmp])) { goto result; } else { cur_cmp++; } } printf(\"Line: %d\\n\", current_line); result: continue; } current_line++; } } This time fgets reads only one line at a time into the buffer. We implement the same algorithm, though this one works a little bit better.\nOther Functions Some functions commonly used for Binary I/O are the fread and write functions.\nFor example, a binary array can be written to a file as such:\nfloat buf[8] = {1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1}; int main(void) { fwrite(\u0026buf[2], sizeof(float), 2, stdout); exit(0); } Also, an equivalent to the lseek function above is fseek and ftell.\nftell simply returns the current offset.\nfseek can be used to set the offset, with the same file modes.\n#include long ftell(FILE* fp); int fseek(FILE* fp, long offset, int whence); ",
+  "wordCount" : "1296",
   "inLanguage": "en",
   "datePublished": "2022-07-31T00:00:00Z",
   "dateModified": "2022-07-31T00:00:00Z",
@@ -210,7 +210,7 @@ This post will go over both of types of I/O by implementing a very simple Swiper
     <h1 class="post-title">
       File I/O on Unix systems
     </h1>
-    <div class="post-meta"><span title='2022-07-31 00:00:00 +0000 UTC'>July 31, 2022</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;  "Abhinav Chavali"
+    <div class="post-meta"><span title='2022-07-31 00:00:00 +0000 UTC'>July 31, 2022</span>&nbsp;·&nbsp;7 min&nbsp;·&nbsp;  "Abhinav Chavali"
   &nbsp;|&nbsp;<a href="https://github.com/dumrich/SiteBackup/tree/master/blog/content-org/content/posts/unix-file-io.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
 
 </div>
@@ -225,7 +225,17 @@ This post will go over both of types of I/O by implementing a very simple Swiper
                     <a href="#posix-file-i-o" aria-label="POSIX File I/O">POSIX File I/O</a><ul>
                         
                 <li>
-                    <a href="#basic-implementation" aria-label="Basic implementation">Basic implementation</a>
+                    <a href="#basic-implementation" aria-label="Basic implementation">Basic implementation</a></li>
+                <li>
+                    <a href="#other-functions" aria-label="Other Functions">Other Functions</a></li></ul>
+                </li>
+                <li>
+                    <a href="#c-standard-i-o" aria-label="C Standard I/O">C Standard I/O</a><ul>
+                        
+                <li>
+                    <a href="#basic-implementation" aria-label="Basic implementation">Basic implementation</a></li>
+                <li>
+                    <a href="#other-functions" aria-label="Other Functions">Other Functions</a>
                 </li>
             </ul>
             </li>
@@ -241,7 +251,7 @@ This post will go over both of types of I/O by implementing a very simple Swiper
 </ul>
 <p>There are 2 different interfaces for I/O because the latter is meant to be portable. C implmentations must provide the <code>&lt;stdio.h&gt;</code> header, so it could work theoretically for any C implementation.</p>
 <p>The POSIX implementation are unbuffered (more on that later), and usually invoke direct system calls to the kernel.</p>
-<p>This post will go over both of types of I/O by implementing a very simple <a href="https://github.com/abo-abo/swiper#swiper">Swiper</a>-like utility (for use in the <a href="https://git.dumrich.com/chabi/cemacs">Cemacs editor</a>) in two different ways. Then, we compare the performance of both implementations.</p>
+<p>This post will go over both of types of I/O by implementing a very simple <a href="https://github.com/abo-abo/swiper#swiper">Swiper</a>-like utility (for use in the <a href="https://git.dumrich.com/chabi/cemacs">Cemacs editor</a>) in two different ways.</p>
 <p>Sources: <a href="https://www.amazon.com/Advanced-Programming-UNIX-Environment-3rd/dp/0321637739">APUE</a>, <a href="https://www.amazon.com/Linux-Programming-Interface-System-Handbook/dp/1593272200/ref=pd_lpo_1?pd_rd_i=1593272200&amp;psc=1">TLPI</a></p>
 <h2 id="posix-file-i-o">POSIX File I/O<a hidden class="anchor" aria-hidden="true" href="#posix-file-i-o">#</a></h2>
 <p>At the core of the unbuffered POSIX functions are <code>file descriptors</code>. File descriptors are non-negative integers that are used to identify open files.</p>
@@ -251,7 +261,177 @@ This post will go over both of types of I/O by implementing a very simple Swiper
 <h3 id="basic-implementation">Basic implementation<a hidden class="anchor" aria-hidden="true" href="#basic-implementation">#</a></h3>
 <p>We start with our interface function; It usually takes a <code>*Editor</code>, but for our purposes, we&rsquo;ll reduce it down to the pathname and the string we want to search for. We will also test it in a :</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
-</span></span></span></code></pre></div>
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdbool.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;ctype.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define BUFFSIZE 4096
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">find_in_file</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="n">size_t</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Open File with flags */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">&#34;unix-file-io.org&#34;</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="o">|</span><span class="n">O_CREAT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">find_in_file</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="s">&#34;file&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>First, we include some headers, specifically:</p>
+<ul>
+<li><code>&lt;unistd.h&gt;</code> gives us the close, lseek functions.</li>
+<li><code>&lt;fcntl.h&gt;</code> gives us the open function, and oflag constants</li>
+<li><code>&lt;ctype.h&gt;</code> gives us the tolower function</li>
+</ul>
+<p>We also define the function <code>find_in_file</code> and the buffer size.</p>
+<p>The buffer size will be how many bytes we will read from the file at a time. More on this later.</p>
+<p>The <code>open</code> function takes a path, and some flags, and returns a file descriptor. This file descriptor is how we will refer to the file from here on out. On most Unix systems, this will be the value 3, as it is the smallest available integer.</p>
+<p>Different flags can be Or&rsquo;d together to create a mode that will determine access permissions. A complete list can be found <a href="https://www.gnu.org/software/libc/manual/html_node/Access-Modes.html">here</a>.</p>
+<p>In this case, we Or the RDONLY flag, and the CREAT flag. This means, that we can only read the file, and if it doesn&rsquo;t exist, it will be created. If we Or&rsquo;d with a write flag, we would also be able to write to the file.</p>
+<p>Next, we call our function, giving it the phrase &ldquo;file&rdquo;.</p>
+<p>Finally, we close the file. When the process exits, the open files automatically close.</p>
+<p>Next, the find_in_file function:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">BUFFSIZE</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">find_in_file</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">phrase</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">current_line</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="n">is_eof</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">match_length</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">phrase</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">buf_len</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">is_eof</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">((</span><span class="n">buf_len</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">BUFFSIZE</span><span class="p">))</span> <span class="o">!=</span> <span class="n">BUFFSIZE</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">is_eof</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">buf_len</span> <span class="o">-</span> <span class="n">strlen</span><span class="p">(</span><span class="n">phrase</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kt">int</span> <span class="n">cur_cmp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">while</span><span class="p">(</span><span class="n">cur_cmp</span> <span class="o">&lt;</span> <span class="n">match_length</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span><span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">cur_cmp</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;\n&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">current_line</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">goto</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span><span class="p">(</span><span class="n">tolower</span><span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">cur_cmp</span><span class="p">])</span> <span class="o">!=</span> <span class="n">tolower</span><span class="p">(</span><span class="n">phrase</span><span class="p">[</span><span class="n">cur_cmp</span><span class="p">]))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">goto</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">cur_cmp</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Line: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">current_line</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nl">result</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">continue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li>
+<p>First, we create a buffer of size BUFFSIZE.</p>
+</li>
+<li>
+<p>Then, we set some preliminary flags. The initial line is 1, and the offset has not reached the end of file. Finally, we set the length of the phrase to how many characters we have to match.</p>
+</li>
+<li>
+<p>Now, we read BUFFSIZE bytes into the buffer. <code>read</code> returns the number of bytes it read, so if that number is less than the size of the buffer, we know that we have reached the end of the file. In that case, the while loop won&rsquo;t loop again.</p>
+</li>
+<li>
+<p>Now that the bytes are in the buffer, we iterate through the current buffer with an algorithm to check if the characters match.</p>
+</li>
+<li>
+<p>We check how many characters have been matched, and if the number of characters matched is equal to the length of the phrase, that is a match. If so, we print the line number. We increment the line number if we encounter a newline character.</p>
+</li>
+</ul>
+<h3 id="other-functions">Other Functions<a hidden class="anchor" aria-hidden="true" href="#other-functions">#</a></h3>
+<p>There are some other functions that may be useful to know.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="nf">creat</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">path</span><span class="p">,</span> <span class="n">mode_t</span> <span class="n">mode</span><span class="p">);</span>
+</span></span></code></pre></div><p>This function is equal to <code>open(path, O_WRONLY | O_CREAT | O_TRUNC, mode)</code>;</p>
+<p>Notice how it is opened for writing only.</p>
+<p>The <code>lseek</code> function is another useful function that is used to manipulate the offset (aka current position in a file).</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">off_t</span> <span class="nf">lseek</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="n">off_t</span> <span class="n">offset</span><span class="p">,</span> <span class="kt">int</span> <span class="n">whence</span><span class="p">);</span>
+</span></span></code></pre></div><p>offset could mean different things depending on <code>whence</code>.</p>
+<ul>
+<li>If whence is SEEK_SET, the files current position if offset from the beginning.</li>
+<li>If whence is SEEK_CUR, the files current position if offset from the current position.</li>
+<li>If whence is SEEK_END, the files current position if offset from the size of the file.</li>
+</ul>
+<p>If you seek past the end of the file, that creates a hole in the file. The hole is not backed by a storage medium.</p>
+<p>Reading and writing operations also manage the offset of the file.</p>
+<h2 id="c-standard-i-o">C Standard I/O<a hidden class="anchor" aria-hidden="true" href="#c-standard-i-o">#</a></h2>
+<p>The C Standard I/O works a little bit differently. We still read and write and interact with files, but this I/O is a little bit more featureful because it comes with internal buffering. The FILE object maintains its own buffer so it doesn&rsquo;t have to make a system call to read or write every single time.</p>
+<p>It may read a little more the first time, so it would just be getting data from its own buffer.</p>
+<p>The 3 kinds of I/O are:</p>
+<ul>
+<li>Character I/O, where one character is read or written</li>
+<li>Line I/O, where one line is read or written</li>
+<li>Direct I/O, where the exact number of objects and size of each object is specified.</li>
+</ul>
+<h3 id="basic-implementation">Basic implementation<a hidden class="anchor" aria-hidden="true" href="#basic-implementation">#</a></h3>
+<p>This is a basic implementation with buffering. This time when we use fopen, we are returned a <code>FILE*</code>. Instead of Or-ing options, we can just add a string of permissions. In this case, we only need &ldquo;r&rdquo; (read) permissions.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="cp">#define BUFFSIZE 4096
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">find_in_file</span><span class="p">(</span><span class="n">FILE</span><span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Open File with flags */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FILE</span><span class="o">*</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s">&#34;search.c&#34;</span><span class="p">,</span> <span class="s">&#34;r&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">find_in_file</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="s">&#34;file&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">fclose</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Now, we implement the same basic algorithm as before:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">BUFFSIZE</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">find_in_file</span><span class="p">(</span><span class="n">FILE</span><span class="o">*</span> <span class="n">fp</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">phrase</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">current_line</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="kt">int</span> <span class="n">match_length</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">phrase</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span><span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">BUFFSIZE</span><span class="p">,</span> <span class="n">fp</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">buf_len</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">buf_len</span> <span class="o">&lt;</span> <span class="n">match_length</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">continue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">buf_len</span> <span class="o">-</span> <span class="n">match_length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kt">int</span> <span class="n">cur_cmp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">while</span><span class="p">(</span><span class="n">cur_cmp</span> <span class="o">&lt;</span> <span class="n">match_length</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span><span class="p">(</span><span class="n">tolower</span><span class="p">((</span><span class="kt">unsigned</span> <span class="kt">char</span><span class="p">)</span><span class="n">buf</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">cur_cmp</span><span class="p">])</span> <span class="o">!=</span> <span class="n">tolower</span><span class="p">((</span><span class="kt">unsigned</span> <span class="kt">char</span><span class="p">)</span><span class="n">phrase</span><span class="p">[</span><span class="n">cur_cmp</span><span class="p">]))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">goto</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">cur_cmp</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Line: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">current_line</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nl">result</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">continue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">current_line</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>This time fgets reads only one line at a time into the buffer. We implement the same algorithm, though this one works a little bit better.</p>
+<h3 id="other-functions">Other Functions<a hidden class="anchor" aria-hidden="true" href="#other-functions">#</a></h3>
+<p>Some functions commonly used for Binary I/O are the fread and write functions.</p>
+<p>For example, a binary array can be written to a file as such:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">buf</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fwrite</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">stdout</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Also, an equivalent to the lseek function above is <code>fseek</code> and <code>ftell</code>.</p>
+<p><code>ftell</code> simply returns the current offset.</p>
+<p><code>fseek</code> can be used to set the offset, with the same file modes.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">long</span> <span class="nf">ftell</span><span class="p">(</span><span class="n">FILE</span><span class="o">*</span> <span class="n">fp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">fseek</span><span class="p">(</span><span class="n">FILE</span><span class="o">*</span> <span class="n">fp</span><span class="p">,</span> <span class="kt">long</span> <span class="n">offset</span><span class="p">,</span> <span class="kt">int</span> <span class="n">whence</span><span class="p">);</span>
+</span></span></code></pre></div>
 
   </div>
 
