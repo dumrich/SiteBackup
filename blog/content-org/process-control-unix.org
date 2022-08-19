@@ -8,4 +8,185 @@
 #+HUGO_TAGS: Systems Processes Unix C
 #+HUGO_CATEGORIES: Programming
 
-* Process Control in the Unix Operating System
+* Process Environment
+The C program executes from the ~main~ function
+
+#+begin_src C
+  int main(int argc, char** argv);
+#+end_src
+
+When a program is executed by by the kernel though, ~main~ isn't first. Programs have a special start up routine before the main function is called.
+
+** Terminating process
+A process can be terminated manually in 3 different ways:
+
+- Return from main
+- ~exit()~
+- ~_exit()~ or ~_Exit()~
+
+Other ways:
+- Last thread returns
+- Last thread calls ~pthread_exit~
+
+Main is usually called something like this (but in assembly):
+#+begin_src C
+  exit(main(argc, argv));
+#+end_src
+
+~_exit()~ and ~_Exit()~ return immediately to the kernel
+~exit()~ closes files, flushes buffers, calls exit handlers etc before returning to the kernel
+
+** Exit Handlers
+In ISO C, you register exit handlers that are called by ~exit~.
+
+#+begin_src C
+  #include <stdlib.h>
+
+  int atexit(void (*func)(void));
+#+end_src
+
+At least 32 functions can be registered. The functions are executed in the reverse order that they're added in.
+
+** Environment Variables
+The environment list is an array of character pointers, with each pointer containing a null terminated string.
+
+It is possible to get the environment variable as an argument to main:
+#+begin_src C
+  int main(int argc, char** argv, char** envp);
+#+end_src
+
+It is not usually recomended though. Instead, you should use the environ global variable
+
+Get values from the environment:
+#+begin_src C
+  #include <stdlib.h>
+
+  char* getenv(const char* name);
+#+end_src
+
+- putenv(3) takes a string ("name=value"), and places it in the environment.
+- setenv(3) sets name to value.
+
+** Memory layout of a C program
+
+- Text segment is the machine instructions that the CPU executes. They are read from the binary, and are read only.
+
+- Data segment is initialized in the program, outside of any function.
+
+- Uninitialized data segment, or BSS, is set to 0 by the kernel.
+
+- Stack, or function local variables
+
+- Heap, where memory is allocated dynamically.
+
+The size command shows the size of the text, data, and bss sections.
+
+** ~setjmp~ and ~longjmp~
+setjmp(3) and longjmp(3) are used to goto a label in another function.
+
+setjmp and longjmp can be used to simulate try/catch in C:
+
+#+begin_src C
+#include <stdio.h>
+#include <setjmp.h>
+#include <stdlib.h>
+
+jmp_buf savebuf;
+
+int do_op(int length) {
+    if(length == 1) {
+        longjmp(savebuf, 1);
+    }
+    return 5;
+}
+
+int main(void) {
+    if(setjmp(savebuf) == 0) { // Try block
+        do_op(2);
+    } else {
+        printf("ERROR: Length is 0\n");
+    }
+}
+#+end_src
+
+** Resource limits
+You can query and set resource limits with the getrlimit(3) and the setrlimit(3) functions.
+
+You simply pass in a resource, and a pointer to an rlimit:
+#+begin_src C
+  struct rlimit {
+      rlim_t rlim_cur;
+      rlim_t rlim_max;
+  };
+#+end_src
+
+rlim_cur is a soft limit
+rlim_max is a hard limit
+
+Only a superuser process can change a hard limit. A regular user must make the soft limit less than or equal to the hard limit.
+
+* Process Control
+Unix systems provide functions to create and manage processes.
+
+** Identifiers
+All processes have PIDs, which are non-negative integers. They are guaranteed to be unique.
+
+Once terminated, the PID can be reused, though usually it isn't necessary for a while.
+
+PID 0 is the scheduler. It doesn't correspond to a process, but is rather a system process created by the kernel.
+
+PID 1 is the init process, invoked by the kernel after the bootstrap procedure. It starts all the services.
+
+PID 2 on modern systems is the /pagedaemon/. It is responsible for the memory paging in the virtual memory system.
+
+Processes have other identifiers too:
+- getpid(3) returns the pid of the process
+- getppid(3) returns the parent process id
+- getuid(3) returns the uid of the caller
+- geteuid(3) returns effective user id
+- getgid(3) returns groupid of process
+- get_egid(3) returns the group id of the calling process
+
+** Fork function
+The fork(3) function allows us to create a new process.
+
+The new process created is called the /child process/. It is called once, but returns twice. In the parent process, it is returned the pid of the child; In the child process, it is returned 0.
+
+When fork is called, both the parent and child continue executing the instructions that follow. The child is a copy of the parent process, so it gets the parents data, heap, and stack. These sections are not shared.
+
+Copy-on-write (COW) is typically used here. COW basically shares the sections of memory between the two processes. If either process tries to modify these regions, the kernel makes a copy of that piece of memory only.
+
+All file descriptors in the parent are duplicated in the child, as if the dup(3) function has been called.
+
+#+begin_src C
+  #include <unistd.h>
+
+  pid_t fork(void);
+#+end_src
+
+*** ~vfork~ function
+The ~vfork~ function is very similar, but it doesn't "copy the address space". It basically assumes that the child won't reference the address space. It instead runs in the address space of the parent.
+
+** ~exit~ functions
+Every process has a parent.
+
+If the parent exits before the child, the childs parent becomes init.
+
+If a process exits before the parent waits for it, it is considered a zombie process. This is because it stays in the process table, but it is terminated. 
+
+** ~wait~ and ~waitpid~
+When a process terminates, the kernel sends a SIGCHLD to the parent. The parent can ignore, or respond to the signal. The ~wait~ and ~waitpid~ functions:
+
+- Block if children are running
+- Return with the termination status of a child, if terminated
+- Return with an error, if there are no child processes
+
+#+begin_src C
+  #include <sys/wait.h>
+
+  pid_t wait(int *stat_loc);
+  pid_t waitpid(pid_t pid, int *stat_loc, int options);
+#+end_src
+
+- ~wait~ function blocks the caller until the child terminates
+- ~waitpid~ specifies the specific child to wait for
