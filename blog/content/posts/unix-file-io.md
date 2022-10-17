@@ -72,11 +72,22 @@ The buffer size will be how many bytes we will read from the file at a time. Mor
 
 The `open` function takes a path, and some flags, and returns a file descriptor. This file descriptor is how we will refer to the file from here on out. On most Unix systems, this will be the value 3, as it is the smallest available integer.
 
-Different flags can be Or'd together to create a mode that will determine access permissions. A complete list can be found [here](https://www.gnu.org/software/libc/manual/html_node/Access-Modes.html).
+Different flags can be Or'd together to create a mode that will determine access permissions.
 
-In this case, we Or the RDONLY flag, and the CREAT flag. This means, that we can only read the file, and if it doesn't exist, it will be created. If we Or'd with a write flag, we would also be able to write to the file.
+-   `O_RDONLY` opens the file for only reading
+-   `O_WRONLY` opens the file for only writing
+-   `O_RDWR` opens the file for both
 
-Next, we call our function, giving it the phrase "file".
+Optional:
+
+-   `O_APPEND` appends to the file after every write
+-   `O_CREAT` creates the file if it doesn't exist
+
+A complete list can be found [here](https://www.gnu.org/software/libc/manual/html_node/Access-Modes.html).
+
+In this case, we `Or` the `RDONLY` flag, and the `CREAT` flag. This means, that we can only read the file, and if it doesn't exist, it will be created. If we Or'd with a write flag, we would also be able to write to the file.
+
+Next, we call our function, giving it the name "file".
 
 Finally, we close the file. When the process exits, the open files automatically close.
 
@@ -134,6 +145,9 @@ void find_in_file(int fd, char* phrase) {
 
 There are some other functions that may be useful to know.
 
+
+#### `creat` {#creat}
+
 ```C
 #include <fcntl.h>
 int creat(const char* path, mode_t mode);
@@ -142,6 +156,9 @@ int creat(const char* path, mode_t mode);
 This function is equal to `open(path, O_WRONLY | O_CREAT | O_TRUNC, mode)`;
 
 Notice how it is opened for writing only.
+
+
+#### `lseek` {#lseek}
 
 The `lseek` function is another useful function that is used to manipulate the offset (aka current position in a file).
 
@@ -161,6 +178,45 @@ If you seek past the end of the file, that creates a hole in the file. The hole 
 Reading and writing operations also manage the offset of the file.
 
 
+#### `dup` and `dup2` {#dup-and-dup2}
+
+The `dup` functions just clone the file descriptor in the file descriptor table of that process. One special thing about the `dup` function is that it chooses the lowest available file descriptor, allowing us to do some special things that we will see later.
+
+```C
+#include <unistd.h>
+int dup(int fd);
+int dup2(int fd, int fd2);
+```
+
+`dup` duplicates _fd_ and gives the result descriptor the lowest available identifier.
+`dup2` duplicates _fd_, giving the new one _fd2_. If _fd2_ is open, it closes it.
+
+`dup` can be used to, for example, redirect stdout to a file like this:
+
+```C
+close(1);
+dup(34);
+```
+
+We clone the file descriptor of some file, duplicating it on standard output.
+
+
+#### `sync` functions {#sync-functions}
+
+Unix systems have a buffer cache that IO runs through. When we `write` to a file, it usually passes through the kernel's buffer cache, and is written at some later time.
+
+The buffer is written eventually, especially when the buffer needs to be reused. The `sync` functions just flush the buffer cache.
+
+```C
+#include <unistd.h>
+int fsync(int fd);
+void sync(void);
+```
+
+`sync` queues block buffers for writing. It doesn't wait for the writing to take place
+`fsync` queues only one file descriptor for writing. It does wait for the writing to take place.
+
+
 ## C Standard I/O {#c-standard-i-o}
 
 The C Standard I/O works a little bit differently. We still read and write and interact with files, but this I/O is a little bit more featureful because it comes with internal buffering. The FILE object maintains its own buffer so it doesn't have to make a system call to read or write every single time.
@@ -172,6 +228,32 @@ The 3 kinds of I/O are:
 -   Character I/O, where one character is read or written
 -   Line I/O, where one line is read or written
 -   Direct I/O, where the exact number of objects and size of each object is specified.
+
+
+### Buffering {#buffering}
+
+The main benefit of standard IO is the default buffering functionalities, which aims to reduce the number of `read` and `write` calls a process makes.
+
+There are 3 kinds of buffering:
+
+-   Fully buffered streams maintain a dynamically allocated buffer. The IO is only performed once the buffer is filled up, or the process flushes the buffers.
+
+    A process can _flush_ a buffer by calling `fflush(3)` or `exit(3)`
+
+    Most file streams are fully buffered
+
+-   Line buffered streams only perform input or output when they encounter a new line ('\n') character. You can write characters to a buffer, and know that they aren't being flushed unless the newline character is written.
+
+    Terminal streams like stdout are line buffered
+
+-   Unbuffered streams just `read` and `write` directly.
+
+    stderr is unbuffered because the result should appear whether or not a newline is encountered.
+
+
+#### Set buffering {#set-buffering}
+
+Buffering can be set using `setbuf(3)` and `setvbuf(3)`. View the man pages for a more detailed look at the functions.
 
 
 ### Basic implementation {#basic-implementation}
@@ -258,3 +340,14 @@ long ftell(FILE* fp);
 
 int fseek(FILE* fp, long offset, int whence);
 ```
+
+
+#### Temp files {#temp-files}
+
+```C
+#include <stdio.h>
+char* tmpname(char*);
+FILE* tmpfile(void);
+```
+
+These functions can be used to generate a temporary file. `tmpname` just returns the pathname, whereas `tmpfile` returns the stream.

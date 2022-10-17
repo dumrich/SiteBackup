@@ -1,9 +1,21 @@
 #+hugo_base_dir: ../
 
-#+TITLE: Multithreading in C1x with pthreads and threads.h
-#+DATE: 2022-08-14
+#+TITLE: Multithreading in C99 with pthreads
+#+DATE: 2022-10-17
 #+AUTHOR: "Abhinav Chavali"
 
 #+HUGO_DRAFT: true
 #+HUGO_TAGS: Multithreading Threads C Unix
 #+HUGO_CATEGORIES: Programming
+
+* Pthreads Notes
+- Threads allow you to partition work concurrently
+- Have access to same address space
+- Benefits of threading can be utilized mainly in a multiprocessor system, but even uniprocessor.o
+
+** Pthread Ids
+Posix threads have ids like processes. However they are not assumed to be ints. They can be structs as well, so we need to have functions to compare them.
+
+This is helpful when a task is tagged with a ptid and we need to compare them to see which thread should be called.
+
+* Multithreading
