@@ -20,7 +20,7 @@ Synopsis Rocky Balboa is now a boxing legend, defending his title (gained in his
     <item>
       <title>File I/O on Unix systems</title>
       <link>https://www.dumrich.com/posts/unix-file-io/</link>
-      <pubDate>Sun, 31 Jul 2022 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 16 Oct 2022 00:00:00 +0000</pubDate>
       
       <guid>https://www.dumrich.com/posts/unix-file-io/</guid>
       <description>Unix systems have two ways of doing Input/Output (I/O) in C:

@@ -3,7 +3,7 @@ title = "File I/O on Unix systems"
 author = ["""
   "Abhinav Chavali"
   """]
-date = 2022-07-31
+date = 2022-10-16
 tags = ["Unix", "C", "Files"]
 categories = ["Programming"]
 draft = false
