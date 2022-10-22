@@ -11,7 +11,7 @@
 * Implementing Circular Queues in C
 In this article, I will be implementing a circular queue in C while explaining the theory of how it works.
 
-[[https://github.com/dumrich/SiteBackup/blob/master/blog/content-org/source/queues.c][Source Code]]
+[[https://github.com/dumrich/SiteBackup/blob/master/blog/content-org/source/queue.c][Source Code]]
 
 ** What is a Queue?
 A /queue/ is a [[https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics)][First In, First Out]] data structure. This means that items will be removed in the same order that they are added, hence first in, first out.
