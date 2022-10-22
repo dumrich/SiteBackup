@@ -13,7 +13,7 @@ draft = false
 
 In this article, I will be implementing a circular queue in C while explaining the theory of how it works.
 
-[Source Code](https://github.com/dumrich/SiteBackup/blob/master/blog/content-org/source/queues.c)
+[Source Code](https://github.com/dumrich/SiteBackup/blob/master/blog/content-org/source/queue.c)
 
 
 ### What is a Queue? {#what-is-a-queue}
