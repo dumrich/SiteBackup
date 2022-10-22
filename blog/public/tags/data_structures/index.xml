@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Data_Structures on dumrich.com</title>
+    <link>https://www.dumrich.com/tags/data_structures/</link>
+    <description>Recent content in Data_Structures on dumrich.com</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Fri, 21 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dumrich.com/tags/data_structures/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Implementing Circular Queues in C</title>
+      <link>https://www.dumrich.com/posts/queues/</link>
+      <pubDate>Fri, 21 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dumrich.com/posts/queues/</guid>
+      <description>Implementing Circular Queues in C In this article, I will be implementing a circular queue in C while explaining the theory of how it works.
+Source Code
+What is a Queue? A queue is a First In, First Out data structure. This means that items will be removed in the same order that they are added, hence first in, first out.
+A frequent analogy that is used to describe queues is a line at some store.</description>
+    </item>
+    
+  </channel>
+</rss>

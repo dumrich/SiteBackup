@@ -5,7 +5,19 @@
     <link>https://www.dumrich.com/posts/</link>
     <description>Recent content in Posts on dumrich.com</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 17 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dumrich.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 21 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.dumrich.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Implementing Circular Queues in C</title>
+      <link>https://www.dumrich.com/posts/queues/</link>
+      <pubDate>Fri, 21 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.dumrich.com/posts/queues/</guid>
+      <description>Implementing Circular Queues in C In this article, I will be implementing a circular queue in C while explaining the theory of how it works.
+Source Code
+What is a Queue? A queue is a First In, First Out data structure. This means that items will be removed in the same order that they are added, hence first in, first out.
+A frequent analogy that is used to describe queues is a line at some store.</description>
+    </item>
+    
     <item>
       <title>Rocky III (1982) Movie Review</title>
       <link>https://www.dumrich.com/posts/rocky-iii/</link>

@@ -2,40 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://www.dumrich.com/tags/c/</loc>
+    <lastmod>2022-10-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.dumrich.com/categories/</loc>
+    <lastmod>2022-10-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.dumrich.com/tags/data_structures/</loc>
+    <lastmod>2022-10-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.dumrich.com/</loc>
+    <lastmod>2022-10-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.dumrich.com/posts/queues/</loc>
+    <lastmod>2022-10-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.dumrich.com/posts/</loc>
+    <lastmod>2022-10-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.dumrich.com/categories/programming/</loc>
+    <lastmod>2022-10-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://www.dumrich.com/tags/</loc>
+    <lastmod>2022-10-21T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://www.dumrich.com/tags/80s/</loc>
     <lastmod>2022-10-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.dumrich.com/tags/action/</loc>
     <lastmod>2022-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://www.dumrich.com/categories/</loc>
-    <lastmod>2022-10-17T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.dumrich.com/</loc>
-    <lastmod>2022-10-17T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://www.dumrich.com/categories/movies/</loc>
-    <lastmod>2022-10-17T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.dumrich.com/posts/</loc>
     <lastmod>2022-10-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.dumrich.com/posts/rocky-iii/</loc>
     <lastmod>2022-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://www.dumrich.com/tags/</loc>
-    <lastmod>2022-10-17T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.dumrich.com/tags/c/</loc>
-    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://www.dumrich.com/posts/unix-file-io/</loc>
     <lastmod>2022-10-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.dumrich.com/tags/files/</loc>
-    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://www.dumrich.com/categories/programming/</loc>
     <lastmod>2022-10-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://www.dumrich.com/tags/unix/</loc>
